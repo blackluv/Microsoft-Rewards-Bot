@@ -50,6 +50,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - os.environ variables for multiple logins (current account names and passwords are too long)
 - Proxy support
 - Add requirements.txt for dependencies
+- Multithreaded mode
 
 
 <h2>License</h2>
