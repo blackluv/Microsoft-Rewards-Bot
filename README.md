@@ -17,7 +17,8 @@ This program will automatically complete search requests and quizzes on Microsof
 - Customizable randomized search speeds  
 - Customizable search queries via newsapi's API  
 - Customizable log file path
-	- Logs errors and info by default, can log executed commands and search terms via changing log.level to logging.DEBUG  
+	- Logs errors and info by default, can log executed commands and search terms via changing log.level to logging.DEBUG
+- Only tested and confirmed working for U.S. (more to come!)  
 
 
 
@@ -52,6 +53,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Add requirements.txt for dependencies
 - Multithreaded mode
 - Split code into different py files for maintainability
+- Support for other regions
 
 
 <h2>License</h2>
