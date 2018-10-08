@@ -253,14 +253,12 @@ def get_news_api_search_terms(api_key):
         search_terms = [results[i]['title'] for i in range(len(results))]
         if search_terms:
             search_terms = list(enumerate(set(search_terms), start=1))
-            # logging.info(msg=f'# of search items: {len(search_terms)}\n')
+            logging.info(msg=f'# of search items: {len(search_terms)}\n')
         else:
-            # logging.info(msg='No search values found!')
-            pass
+            logging.info(msg='No search values found!')
         return search_terms
     except RequestException:
-        pass
-        # logging.exception(msg='Search API failed.')
+        logging.exception(msg='Search API failed.')
 
 
 def search(search_terms):
