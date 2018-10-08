@@ -5,7 +5,7 @@ Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes
 
 <h2>Overview</h2>
 
-This program will automatically complete search requests and quizzes on Microsoft Rewards! This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). Search terms are the top daily headlines for a given category, retrieved via newsapi.org's free api. 100% free to use and open source.  Code critique/feedback and contributions welcome!
+This program will automatically complete search requests and quizzes on Microsoft Rewards! This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). Search terms are the top daily headlines for a given category, retrieved via newsapi.org's free API. 100% free to use and open source.  Code critique/feedback and contributions welcome!
 
 
 <h2>Features</h2> 
@@ -15,7 +15,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Headless mode (Confirmed working on Digital Ocean linux droplet)  
 - Supports unlimited accounts via JSON  
 - Customizable randomized search speeds  
-- Customizable search queries via newsapi's api  
+- Customizable search queries via newsapi's API  
 - Customizable log file path
 	- Logs errors and info by default, can log executed commands and search terms via changing log.level to logging.DEBUG  
 
@@ -25,7 +25,7 @@ This program will automatically complete search requests and quizzes on Microsof
  
 1. Clone repo
 2. Modify ms_rewards_login_dict.json with your account names and passwords
-3. Modify news_api_key.json with your news api key  
+3. Modify news_api_key.json with your news API key  
 4. Open cmd/terminal/shell and navigate to repo  
 5. Enter into cmd/terminal/shell: `python ms_rewards.py`  
 	- Script by default will run headlessly (can change this setting in the .py file)  
