@@ -51,6 +51,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Proxy support
 - Add requirements.txt for dependencies
 - Multithreaded mode
+- Split code into different py files for maintainability
 
 
 <h2>License</h2>
