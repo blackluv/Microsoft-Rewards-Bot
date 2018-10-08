@@ -17,7 +17,8 @@ This program will automatically complete search requests and quizzes on Microsof
 
 
 
-<h2>How TO USE</h2>  
+<h2>How TO USE</h2> 
+ 
 1. Clone repo.  
 2. Modify ms_rewards_login_dict.json with your account names and passwords.  
 3. Modify news_api_key.json with your news api key.  
