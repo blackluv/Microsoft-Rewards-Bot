@@ -21,7 +21,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Only tested and confirmed working for U.S. (more to come!)  
 
 <h2>REQUIREMENTS</h2>
-
+- Python 3.7
 - Selenium 3.14.0
 - Requests 2.19.1
 
