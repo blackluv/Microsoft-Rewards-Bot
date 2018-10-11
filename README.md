@@ -21,6 +21,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Only tested and confirmed working for U.S. (more to come!)  
 
 <h2>REQUIREMENTS</h2>
+
 - Python 3.7
 - Selenium 3.14.0
 - Geckodriver for Selenium 
@@ -48,6 +49,7 @@ This program will automatically complete search requests and quizzes on Microsof
 	- Change the paths to the json in the .py file to appropriate path
 
 NOTE: If geckodriver for selenium is missing:
+
 General Instructions (Windows, Linux, OS X)
 1. download [geckodriver here](https://github.com/mozilla/geckodriver)
 2. extract to python parent directory e.g. 'C:\Python37-22'
