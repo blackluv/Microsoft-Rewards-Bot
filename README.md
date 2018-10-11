@@ -12,7 +12,7 @@ This program will automatically complete search requests and quizzes on Microsof
  
 - Completes PC search, Edge search, Mobile search via user agents
 - Completes polls, all types of quizzes (multiple choice, click and drag and reorder), and explore dailies 
-- Headless mode (Confirmed working on Digital Ocean linux droplet)  
+- Headless mode (Confirmed working on DigitalOcean linux droplet)  
 - Supports unlimited accounts via JSON  
 - Customizable randomized search speeds  
 - Customizable search queries via newsapi's API  
@@ -36,6 +36,7 @@ This program will automatically complete search requests and quizzes on Microsof
 	- Enter in terminal: `crontab -e`
 	- Enter in terminal: `0 12 * * * python ms_rewards.py`
 		- Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
+	- Change the paths to the json in the .py file to appropriate path
 	
 <h2>TO DO</h2>
 

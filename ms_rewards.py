@@ -239,7 +239,6 @@ def log_in(email_address, pass_word):
     click_by_id('idSIButton9')
     logging.debug(msg='Clicked sign-in')
 
-
 def get_news_api_search_terms(api_key):
     news_api_url = ('https://newsapi.org/v2/everything?'
                     'q=Cryptocurrency&'
@@ -483,11 +482,13 @@ def browser_setup(headless_mode, user_agent):
     :param user_agent: String
     :return: webdriver obj
     """
+
     options = Options()
     options.headless = headless_mode
     profile = webdriver.FirefoxProfile()
     profile.set_preference('general.useragent.override', user_agent)
-    firefox_browser_obj = webdriver.Firefox(firefox_options=options, firefox_profile=profile)
+    # firefox_browser_obj = webdriver.Firefox(firefox_options=options, firefox_profile=profile)
+    firefox_browser_obj = webdriver.Firefox(options=options, firefox_profile=profile)
     return firefox_browser_obj
 
 
@@ -501,8 +502,9 @@ if __name__ == '__main__':
         # get api key and get search terms
         news_api_key = get_news_api_key()
         search_list = get_news_api_search_terms(news_api_key)
-        login_dict = get_login_dict()
 
+        # get login dict
+        login_dict = get_login_dict()
         # iter through accounts, search, and complete quizzes
         for email, password in login_dict.items():
             # MOBILE MODE
