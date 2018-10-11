@@ -23,11 +23,12 @@ This program will automatically complete search requests and quizzes on Microsof
 <h2>REQUIREMENTS</h2>
 - Python 3.7
 - Selenium 3.14.0
+- Geckodriver for Selenium 
 - Requests 2.19.1
 
 
 <h2>HOW TO USE</h2> 
- 
+
 1. Clone repo
 2. Open cmd/terminal/shell and navigate to repo
 3. Modify ms_rewards_login_dict.json with your account names and passwords
@@ -35,7 +36,8 @@ This program will automatically complete search requests and quizzes on Microsof
 5. Open cmd/terminal/shell
 6. Enter into cmd/terminal/shell: `pip install -r requirements.txt`
 	- This installs dependencies (selenium and requests)
-7. Enter into cmd/terminal/shell: `python ms_rewards.py`  
+7. Enter into cmd/terminal/shell: `python ms_rewards.py`
+	- If python environment variable is not set, enter `/path/to/python/executable ms_rewards.py`
 	- Script by default will run headlessly (can change this setting in the .py file)  
 	- Script by default will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file) 
 	- Run time for one account is under 5 minutes, for 100% daily completion  
@@ -44,7 +46,16 @@ This program will automatically complete search requests and quizzes on Microsof
 	- Enter in terminal: `0 12 * * * python ms_rewards.py`
 		- Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
 	- Change the paths to the json in the .py file to appropriate path
-	
+
+NOTE: If geckodriver for selenium is missing:
+General Instructions (Windows, Linux, OS X)
+1. download [geckodriver here](https://github.com/mozilla/geckodriver)
+2. extract to python parent directory e.g. 'C:\Python37-22'
+
+Or if on OS X/Linux
+1. `brew install geckodriver`
+
+
 <h2>TO DO</h2>
 
 - Argparse for options:
