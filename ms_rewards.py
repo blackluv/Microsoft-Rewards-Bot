@@ -239,6 +239,7 @@ def log_in(email_address, pass_word):
     click_by_id('idSIButton9')
     logging.debug(msg='Clicked sign-in')
 
+
 def get_news_api_search_terms(api_key):
     news_api_url = ('https://newsapi.org/v2/everything?'
                     'q=Cryptocurrency&'
@@ -401,6 +402,7 @@ def click_quiz():
             random.choice(choices).click()
             time.sleep(3)
         # click the 'next question' button
+        wait_until_clickable(By.ID, 'check', 30)
         click_by_id('check')
         # if the green check mark reward icon is visible, end loop
         if find_by_css('span[class="rw_icon"]'):
@@ -487,7 +489,6 @@ def browser_setup(headless_mode, user_agent):
     options.headless = headless_mode
     profile = webdriver.FirefoxProfile()
     profile.set_preference('general.useragent.override', user_agent)
-    # firefox_browser_obj = webdriver.Firefox(firefox_options=options, firefox_profile=profile)
     firefox_browser_obj = webdriver.Firefox(options=options, firefox_profile=profile)
     return firefox_browser_obj
 

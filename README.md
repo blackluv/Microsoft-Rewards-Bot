@@ -20,19 +20,25 @@ This program will automatically complete search requests and quizzes on Microsof
 	- Logs errors and info by default, can log executed commands and search terms via changing log.level to logging.DEBUG
 - Only tested and confirmed working for U.S. (more to come!)  
 
+<h2>REQUIREMENTS</h2>
+- Selenium 3.14.0
+- Requests 2.19.1
 
 
 <h2>HOW TO USE</h2> 
  
 1. Clone repo
-2. Modify ms_rewards_login_dict.json with your account names and passwords
-3. Modify news_api_key.json with your news API key  
-4. Open cmd/terminal/shell and navigate to repo  
-5. Enter into cmd/terminal/shell: `python ms_rewards.py`  
+2. Open cmd/terminal/shell and navigate to repo
+3. Modify ms_rewards_login_dict.json with your account names and passwords
+4. Modify news_api_key.json with your newsapi.org API key  
+5. Open cmd/terminal/shell
+6. Enter into cmd/terminal/shell: `pip install -r requirements.txt`
+	- This installs dependencies (selenium and requests)
+7. Enter into cmd/terminal/shell: `python ms_rewards.py`  
 	- Script by default will run headlessly (can change this setting in the .py file)  
 	- Script by default will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file) 
 	- Run time for one account is under 5 minutes, for 100% daily completion  
-6. Crontab (Optional for automated script daily on linux)  
+8. Crontab (Optional for automated script daily on linux)  
 	- Enter in terminal: `crontab -e`
 	- Enter in terminal: `0 12 * * * python ms_rewards.py`
 		- Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
