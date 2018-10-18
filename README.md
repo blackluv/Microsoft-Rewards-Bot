@@ -76,12 +76,12 @@ Or if on OS X/Linux
 
 <h2>Versions<h2>
 
-<h5>2018.02</h5>
+<p>**2018.02**</p>
 	- Added argparse
 	- Reworked newsapi.org API to google trends
 	- Fixed logging
 	- Fixed issue with dropped searches
 
-<h5>2018.02</h5>
+<p>**2018.02**</p>
 	- Initial release
 		- Basic functionality for completing searches and quizzes.
