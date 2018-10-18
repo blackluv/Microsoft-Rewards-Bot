@@ -46,8 +46,11 @@ This program will automatically complete search requests and quizzes on Microsof
 		- Copy and paste links without surrounding quotes, each on individual line, like such:
 
     httplink1
+
     httplink2
+
     httplink3
+
 	- Enter cmd/terminal/shell argument `python ms_rewards.py --email`
 	- **Script will be manual, requires key press to continue, as the quizzes are not yet standardized.**
 	 
