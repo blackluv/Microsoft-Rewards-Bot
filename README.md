@@ -74,16 +74,16 @@ Or if on OS X/Linux
 100% free to use and open source.  :see_no_evil: :hear_no_evil: :speak_no_evil:
 
 
-<h2>Versions<h2>
+<h2>Versions</h2>
 
-2018.02
+**2018.02**
 
 	- Added argparse
 	- Reworked newsapi.org API to google trends
 	- Fixed logging
 	- Fixed issue with dropped searches
 
-2018.01
+**2018.01**
 
 	- Initial release
-		- Basic functionality for completing searches and quizzes.
+	- Basic functionality for completing searches and quizzes.
