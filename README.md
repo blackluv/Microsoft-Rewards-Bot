@@ -14,7 +14,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Retrieves top daily searches via google trends' API
 - Completes polls, all types of quizzes (multiple choice, click and drag and reorder), and explore dailies 
 - Headless mode (Confirmed working on DigitalOcean linux droplet)  
-- Supports unlimited accounts via JSON  
+- Supports unlimited accounts via JSON, in randomized order.  
 - Randomized search speeds   
 - Logs errors and info by default, can log executed commands and search terms via changing log.level to logging.DEBUG
 - Tested and confirmed working for U.S. (more to come!)  
@@ -41,6 +41,14 @@ This program will automatically complete search requests and quizzes on Microsof
 	- Script by default will run headlessly (can change this setting in the .py file)  
 	- Run time for one account is under 5 minutes, for 100% daily completion 
 	- If python environment variable is not set, enter `/path/to/python/executable ms_rewards.py`
+4a. For completing points from email links:
+	- Modify email_links.txt file with email links.
+		- Copy and paste links without surrounding quotes, like such:
+			-```https://e.microsoft.com/data/link1
+https://e.microsoft.com/data/link2
+https://e.microsoft.com/data/link3```
+	- Enter cmd/terminal/shell argument `python ms_rewards.py --email`
+	- **Script will be manual, requires key press to continue, as the quizzes are not yet standardized.**
 	 
 5. Crontab (Optional for automated script daily on linux)  
 	- Enter in terminal: `crontab -e`
@@ -79,6 +87,8 @@ Or if on OS X/Linux
 **2018.02**
 
 	- Added argparse
+	- Added points from email links
+	- Added randomized account login order
 	- Reworked newsapi.org API to google trends
 	- Fixed logging
 	- Fixed issue with dropped searches
