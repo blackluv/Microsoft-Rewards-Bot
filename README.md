@@ -51,7 +51,7 @@ https://e.microsoft.com/data/link2
 https://e.microsoft.com/data/link3
 ```
 
-        - Enter cmd/terminal/shell argument `python ms_rewards.py --email`
+	- Enter cmd/terminal/shell argument `python ms_rewards.py --email`
 	- **Script will be manual, requires key press to continue, as the quizzes are not yet standardized.**
 	 
 5. Crontab (Optional for automated script daily on linux)  
