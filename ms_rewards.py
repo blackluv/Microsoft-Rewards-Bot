@@ -1,5 +1,6 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
+# Version 2018.02
 
 import os
 import argparse
@@ -60,6 +61,8 @@ def parse_args():
                             help='Activates pc search, default is off.')
     arg_parser.add_argument('--quiz', action='store_true', dest='quiz_mode', default=False,
                             help='Activates pc quiz search, default is off.')
+    arg_parser.add_argument('--email', action='store_true', dest='email_mode', default=False,
+                            help='Activates quiz mode, default is off.')
     return arg_parser.parse_args()
 
 
@@ -527,6 +530,30 @@ def get_point_total():
     logging.info(msg=f'Mobile points = {mobile_points}')
 
 
+def get_email_links():
+    """
+    Gets the email links from the text file, appends to a list
+    :return: List of string URLs
+    """
+    with open('email_links.txt', 'r') as f:
+        links = []
+        for link in f.readlines():
+            links.append(link)
+    return links
+
+
+def click_email_links(links):
+    """
+    Receives list of string URLs and clicks through them.
+    Manual mode only, quizzes are still in flux and not standardized yet.
+    :param links: List of string URLs
+    :return: None
+    """
+    for link in links:
+        browser.get(link)
+        input('Press any key to continue.')
+
+
 if __name__ == '__main__':
     try:
         # start logging
@@ -547,8 +574,19 @@ if __name__ == '__main__':
         if parser.mobile_mode or parser.pc_mode:
             search_list = get_search_terms()
 
+        # get URLs from emailed links
+        email_links = []
+        if parser.email_mode:
+            email_links = get_email_links()
+
         # iter through accounts, search, and complete quizzes
-        for email, password in login_dict.items():
+        login_dict_keys = list(login_dict.keys())
+        random.shuffle(login_dict_keys)
+        for dict_key in login_dict_keys:
+            email = dict_key
+            password = login_dict[dict_key]
+            # for email,password in random.sample(list(login_dict.items())):
+            # for email, password in login_dict.items():
 
             if parser.mobile_mode:
                 # MOBILE MODE
@@ -563,7 +601,7 @@ if __name__ == '__main__':
                 except KeyboardInterrupt:
                     browser.quit()
 
-            if parser.pc_mode or parser.quiz_mode:
+            if parser.pc_mode or parser.quiz_mode or parser.email_mode:
                 # PC MODE
                 logging.info(msg='************PC***************')
                 # set up edge headless browser and edge pc user agent
@@ -576,6 +614,8 @@ if __name__ == '__main__':
                     if parser.quiz_mode:
                         # complete quizzes
                         iter_dailies()
+                    if parser.email_mode:
+                        click_email_links(email_links)
                     # get point totals
                     get_point_total()
                     browser.quit()
