@@ -44,11 +44,11 @@ This program will automatically complete search requests and quizzes on Microsof
 4a. For completing points from email links:
 	- Modify email_links.txt file with email links.
 		- Copy and paste links without surrounding quotes, like such: 
-```https://e.microsoft.com/data/link1
-
+```
+https://e.microsoft.com/data/link1
 https://e.microsoft.com/data/link2
-
-https://e.microsoft.com/data/link3```
+https://e.microsoft.com/data/link3
+```
 	- Enter cmd/terminal/shell argument `python ms_rewards.py --email`
 	- **Script will be manual, requires key press to continue, as the quizzes are not yet standardized.**
 	 
