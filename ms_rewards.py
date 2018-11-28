@@ -1,6 +1,11 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2018.02
+# Version 2018.03
+
+# TODO replace api call with requests instead of urlOpen
+# TODO DRY for getting points total
+# TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
+# TODO sign-in prompt is getting more frequent, on some occassion the prompt does not go away
 
 import os
 import argparse
@@ -15,7 +20,8 @@ from urllib.request import urlopen
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException, TimeoutException, \
-    ElementClickInterceptedException, ElementNotVisibleException, ElementNotInteractableException
+    ElementClickInterceptedException, ElementNotVisibleException, \
+    ElementNotInteractableException, NoSuchElementException, UnexpectedAlertPresentException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
@@ -93,11 +99,12 @@ def get_search_terms():
                 search_terms.append(topic['title']['query'].lower())
                 for related_topic in topic['relatedQueries']:
                     search_terms.append(related_topic['query'].lower())
-            time.sleep(random.randint(3, 10))
+            time.sleep(random.randint(3, 5))
         except (URLError, HTTPError):
             logging.info('Error retrieving google trends json.')
+    search_terms = set(search_terms)
     logging.info(msg=f'# of search items: {len(search_terms)}\n')
-    return list(enumerate(set(search_terms)))
+    return list(enumerate(search_terms, start=1))
 
 
 def get_login_info():
@@ -120,6 +127,10 @@ def browser_setup(headless_mode, user_agent):
     options.headless = headless_mode
     profile = webdriver.FirefoxProfile()
     profile.set_preference('general.useragent.override', user_agent)
+    # experimental disable notifications
+    profile.set_preference('dom.webnotifications.serviceworker.enabled', False)
+    profile.set_preference('dom.webnotifications.enabled', False)
+    profile.set_preference('geo.enabled', False)
     firefox_browser_obj = webdriver.Firefox(options=options, firefox_profile=profile)
     return firefox_browser_obj
 
@@ -193,8 +204,14 @@ def wait_until_visible(by_, selector, time_to_wait=10):
         WebDriverWait(browser, time_to_wait).until(ec.visibility_of_element_located((by_, selector)))
     except TimeoutException:
         logging.exception(msg=f'{selector} element Not Visible - Timeout Exception', exc_info=False)
+    except NoSuchElementException:
+        logging.exception(msg=f'{selector} cannot be located.')
+        browser.refresh()
     except WebDriverException:
-        logging.exception(msg=f'Webdriver error for {selector} object')
+        logging.exception(msg=f'Timeout error for {selector} object')
+        screenshot_file_name = f'{datetime.now().strftime("%Y%m%d%%h%M%S")}_{selector}.png'
+        screenshot_file_path = os.path.join('logs', screenshot_file_name)
+        browser.save_screenshot(screenshot_file_path)
 
 
 def wait_until_clickable(by_, selector, time_to_wait=10, custom_log='TimeoutException'):
@@ -210,6 +227,12 @@ def wait_until_clickable(by_, selector, time_to_wait=10, custom_log='TimeoutExce
         WebDriverWait(browser, time_to_wait).until(ec.element_to_be_clickable((by_, selector)))
     except TimeoutException:
         logging.exception(msg=custom_log)
+    except NoSuchElementException:
+        logging.exception(msg=f'{selector} cannot be located.')
+        screenshot_file_name = f'{datetime.now().strftime("%Y%m%d%%H%M%S")}_{selector}.png'
+        screenshot_file_path = os.path.join('logs', screenshot_file_name)
+        browser.save_screenshot(screenshot_file_path)
+        browser.refresh()
     except WebDriverException:
         logging.exception(msg=f'Error., selector: {selector}')
 
@@ -225,6 +248,12 @@ def send_key_by_name(name, key):
         browser.find_element_by_name(name).send_keys(key)
     except (ElementNotVisibleException, ElementClickInterceptedException, ElementNotInteractableException):
         logging.exception(msg='Element not clickable or visible.')
+    except NoSuchElementException:
+        logging.exception(msg=f'{name} cannot be located.')
+        screenshot_file_name = f'{datetime.now().strftime("%Y%m%d%%H%M%S")}_{name}.png'
+        screenshot_file_path = os.path.join('logs', screenshot_file_name)
+        browser.save_screenshot(screenshot_file_path)
+        browser.refresh()
     except WebDriverException:
         logging.exception(msg='Error.')
 
@@ -240,6 +269,12 @@ def send_key_by_id(obj_id, key):
         browser.find_element_by_id(obj_id).send_keys(key)
     except (ElementNotVisibleException, ElementClickInterceptedException, ElementNotInteractableException):
         logging.exception(msg='Element not clickable or visible.')
+    except NoSuchElementException:
+        logging.exception(msg=f'{id} cannot be located.')
+        screenshot_file_name = f'{datetime.now().strftime("%Y%m%d%%H%M%S")}_{obj_id}.png'
+        screenshot_file_path = os.path.join('logs', screenshot_file_name)
+        browser.save_screenshot(screenshot_file_path)
+        browser.refresh()
     except WebDriverException:
         logging.exception(msg='Error.')
 
@@ -282,6 +317,12 @@ def clear_by_id(obj_id):
         browser.find_element_by_id(obj_id).clear()
     except (ElementNotVisibleException, ElementNotInteractableException):
         logging.exception(msg='Element not clickable or visible.')
+    except NoSuchElementException:
+        logging.exception(msg=f'{id} cannot be located.')
+        screenshot_file_name = f'{datetime.now().strftime("%Y%m%d%%H%M%S")}_{obj_id}.png'
+        screenshot_file_path = os.path.join('logs', screenshot_file_name)
+        browser.save_screenshot(screenshot_file_path)
+        browser.refresh()
     except WebDriverException:
         logging.exception(msg='Error.')
 
@@ -326,15 +367,57 @@ def search(search_terms, mobile_search=False):
         logging.info(msg="Search Aborted. No Search Terms.")
     else:
         browser.get(BING_SEARCH_URL)
-        for num, item in search_terms[:search_limit]:
+        for num, item in search_terms:
             # clears search bar and enters in next search term
-            wait_until_visible(By.ID, 'sb_form_q', 10)
-            clear_by_id('sb_form_q')
-            send_key_by_id('sb_form_q', item)
-            send_key_by_id('sb_form_q', Keys.RETURN)
-            # prints search term and item, limited to 80 chars
-            logging.debug(msg=f'Search #{num}: {item[:80]}')
-            time.sleep(random.randint(3, 5))  # random sleep for more human-like, and let ms reward website keep up.
+            try:
+                wait_until_visible(By.ID, 'sb_form_q', 15)
+                clear_by_id('sb_form_q')
+                send_key_by_id('sb_form_q', item)
+                send_key_by_id('sb_form_q', Keys.RETURN)
+                # prints search term and item, limited to 80 chars
+                logging.debug(msg=f'Search #{num}: {item[:80]}')
+                time.sleep(random.randint(3, 4))  # random sleep for more human-like, and let ms reward website keep up.
+            except UnexpectedAlertPresentException:
+                # this captures alerts such as bing asking for location information for certain search terms
+                pass
+
+            # check to see if search is complete, if yes, break out of loop
+            if num % search_limit == 0:
+                browser.get(DASHBOARD_URL)
+                time.sleep(4)
+                wait_until_clickable(By.LINK_TEXT, 'Points breakdown', 30)
+                browser.find_element_by_link_text('Points breakdown').click()
+                time.sleep(4)
+                try:
+                    if mobile_search:
+                        # get points
+                        mobile_points = browser.find_element_by_xpath(
+                            '//a[contains(text(), "Mobile search")]//..//..[contains(@class, "title-detail")]//'
+                            'p[contains(@class,"pointsDetail")]').text
+                        # check if points is maxed out, split out the ints
+                        mobile_points = mobile_points.split(' / ')
+                        if mobile_points[0] == mobile_points[1]:
+                            break
+                    # check if pc/edge points are maxed out
+                    else:
+                        # get edge points
+                        edge_points = browser.find_element_by_xpath(
+                            '//a[contains(text(), "Microsoft Edge bonus")]//..//..[contains(@class, "title-detail")]//'
+                            'p[contains(@class,"pointsDetail")]').text
+                        edge_points = edge_points.split(' / ')
+                        # get pc points
+                        pc_points = browser.find_element_by_xpath(
+                            '//a[contains(text(), "PC search")]//..//..[contains(@class, "title-detail")]//'
+                            'p[contains(@class,"pointsDetail")]').text
+                        pc_points = pc_points.split(' / ')
+                        # break if both pc and edge points are fulfilled
+                        if pc_points[0] == pc_points[1]:
+                            if edge_points[0] == edge_points[1]:
+                                break
+                    browser.get(BING_SEARCH_URL)
+                    time.sleep(3)
+                except IndexError:
+                    logging.error(msg='Index not found.')
 
 
 def iter_dailies():
@@ -348,8 +431,10 @@ def iter_dailies():
         sign_in_splash[0].click()
     # on dashboard, get list of dailies by yellow plus icon signifying open offer
     # need this sleep otherwise MS thinks I am not logged in. In future change to wait until fully loaded.
-    time.sleep(10)
-    wait_until_visible(By.XPATH, '//span[contains(@class, "mee-icon-AddMedium")]', 30)
+    time.sleep(4)
+    # TODO there is an error here where the object cannot be converted to data, only happens on ubuntu
+    # TODO may be related to a wait after a sleep.
+    # TODO stack overflow states that it is likely related to ram, need 2gb over 1gb.
     open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
     if not open_offers:
         logging.info(msg='No dailies found.')
@@ -364,9 +449,12 @@ def iter_dailies():
         # click and switch focus to latest window
         offer.click()
         latest_window()
-        time.sleep(10)
+        time.sleep(5)
+        # check for sign-in prompt
+        sign_in_prompt()
         # check for poll by ID
-        if find_by_id('Radio00'):
+
+        if find_by_id('btoption0'):
             logging.debug(msg='Poll identified.')
             daily_poll()
         # check for quiz by checking for ID
@@ -413,8 +501,9 @@ def daily_poll():
     Randomly clicks a poll answer, returns to main window
     :return: None
     """
+    time.sleep(3)
     # click poll option
-    choices = ['Radio00', 'Radio01']
+    choices = ['btoption0', 'btoption1']  # new poll format
     click_by_id(random.choice(choices))
     time.sleep(3)
     # close window, switch to main
@@ -440,6 +529,7 @@ def lightning_quiz():
             break
     # close the quiz completion splash
     find_by_css('.cico.btCloseBack')[0].click()
+    time.sleep(3)
     main_window()
 
 
@@ -458,6 +548,7 @@ def click_quiz():
         wait_until_clickable(By.ID, 'check', 30)
         click_by_id('check')
         # if the green check mark reward icon is visible, end loop
+        time.sleep(3)
         if find_by_css('span[class="rw_icon"]'):
             break
     main_window()
@@ -498,13 +589,23 @@ def drag_and_drop_quiz():
     main_window()
 
 
+def sign_in_prompt():
+    time.sleep(3)
+    sign_in_prompt = find_by_class('simpleSignIn')
+    if sign_in_prompt:
+        logging.info(msg='Detected sign-in prompt')
+        browser.find_element_by_link_text('Sign in').click()
+        logging.info(msg='Clicked sign-in prompt')
+        time.sleep(4)
+
+
 def get_point_total():
     """
     Logs points for account, on both mobile and pc user agents
     :return: None
     """
     browser.get(DASHBOARD_URL)
-    time.sleep(10)
+    time.sleep(3)
     # get number of incomplete offers
     num_open_offers = len(browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]'))
     logging.info(msg=f'Number of incomplete offers: {num_open_offers}')
@@ -516,15 +617,16 @@ def get_point_total():
     logging.info(msg=f'Total points = {points}')
     # get edge, pc, mobile point totals
     browser.find_element_by_link_text('Points breakdown').click()
-    edge_points = browser.find_element_by_xpath('/html/body/div[5]/div[2]/div['
-                                                '2]/mee-rewards-points-breakdown/div/div/div[2]/div[1]/div/div['
-                                                '2]/mee-rewards-user-points-details/div/div/div/div/p[2]').text
-    pc_points = browser.find_element_by_xpath('/html/body/div[5]/div[2]/div['
-                                              '2]/mee-rewards-points-breakdown/div/div/div[2]/div[2]/div/div['
-                                              '2]/mee-rewards-user-points-details/div/div/div/div/p[2]').text
-    mobile_points = browser.find_element_by_xpath('/html/body/div[5]/div[2]/div['
-                                                  '2]/mee-rewards-points-breakdown/div/div/div[2]/div[3]/div/div['
-                                                  '2]/mee-rewards-user-points-details/div/div/div/div/p[2]').text
+    time.sleep(3)
+    edge_points = browser.find_element_by_xpath(
+        '//a[contains(text(), "Microsoft Edge bonus")]//..//..[contains(@class, "title-detail")]'
+        '//.[contains(@class,"pointsDetail")]').text
+    pc_points = browser.find_element_by_xpath(
+        '//a[contains(text(), "PC search")]//..//..[contains(@class, "title-detail")]'
+        '//.[contains(@class,"pointsDetail")]').text
+    mobile_points = browser.find_element_by_xpath(
+        '//a[contains(text(), "Mobile search")]//..//..[contains(@class, "title-detail")]'
+        '//.[contains(@class,"pointsDetail")]').text
     logging.info(msg=f'Edge points = {edge_points}')
     logging.info(msg=f'PC points = {pc_points}')
     logging.info(msg=f'Mobile points = {mobile_points}')
@@ -559,6 +661,7 @@ if __name__ == '__main__':
         # start logging
         init_logging()
         logging.info(msg='---------------------------------')
+        logging.info(msg='--------------New----------------')
         logging.info(msg='---------------------------------')
 
         # argparse
@@ -585,20 +688,22 @@ if __name__ == '__main__':
         for dict_key in login_dict_keys:
             email = dict_key
             password = login_dict[dict_key]
-            # for email,password in random.sample(list(login_dict.items())):
-            # for email, password in login_dict.items():
 
             if parser.mobile_mode:
                 # MOBILE MODE
                 logging.info(msg='************MOBILE***************')
                 # set up headless browser and mobile user agent
                 browser = browser_setup(parser.headless_setting, MOBILE_USER_AGENT)
+                # browser.find_element_by_tag_name('html').send_keys(Keys.F11)
                 try:
                     log_in(email, password)
                     # mobile search
                     search(search_list, mobile_search=True)
                     browser.quit()
                 except KeyboardInterrupt:
+                    browser.quit()
+                except WebDriverException:
+                    logging.info(msg=f'WebDriverException while executing mobile portion', exc_info=True)
                     browser.quit()
 
             if parser.pc_mode or parser.quiz_mode or parser.email_mode:
@@ -614,14 +719,16 @@ if __name__ == '__main__':
                     if parser.quiz_mode:
                         # complete quizzes
                         iter_dailies()
+                        # get point totals, this is here because my cloud only has 1gb of ram.
+                        get_point_total()
                     if parser.email_mode:
                         click_email_links(email_links)
-                    # get point totals
-                    get_point_total()
                     browser.quit()
                 except KeyboardInterrupt:
                     browser.quit()
-
+                except WebDriverException:
+                    logging.error(msg=f'WebDriverException while executing pc portion', exc_info=True)
+                    browser.quit()
             logging.info(msg='\n\n')
     except WebDriverException:
-        logging.exception(msg='Webdriver failure.')
+        logging.exception(msg='Failure at main()')

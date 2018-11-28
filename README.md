@@ -28,7 +28,7 @@ This program will automatically complete search requests and quizzes on Microsof
 <h2>HOW TO USE</h2> 
 
 1. Clone and navigate to repo
-2. Modify ms_rewards_login_dict.json with your account names and passwords
+2. Modify ms_rewards_login_dict.json with your account names and passwords, remove .example from filename.
 3. Enter into cmd/terminal/shell: `pip install -r requirements.txt`
 	- This installs dependencies (selenium)
 4. Enter into cmd/terminal/shell: `python ms_rewards.py --headless --mobile --pc --quiz`
@@ -85,6 +85,11 @@ Or if on OS X/Linux
 
 
 <h2>Versions</h2>
+
+**2018.03**
+	- Fixed issue with daily poll IDs changing
+	- Added check for sign-in prompt after click on a quiz 
+	- Misc fixes
 
 **2018.02**
 
