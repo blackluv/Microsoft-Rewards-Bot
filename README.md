@@ -22,6 +22,7 @@ This program will automatically complete search requests and quizzes on Microsof
 <h2>REQUIREMENTS</h2>
 
 - Python 3.6
+- Requests 2.19.1
 - Selenium 3.14.0
 - Geckodriver for Selenium 
 
@@ -84,9 +85,20 @@ Or if on OS X/Linux
 100% free to use and open source.  :see_no_evil: :hear_no_evil: :speak_no_evil:
 
 
-<h2>Versions</h2>
+<h2>Versions</h2>  
+
+**2018.04**  
+
+    - Performance improvements
+	- Fixed login, now waits until page is fully loaded
+	- Replaced urllib api call with requests
+	- Updated get points with chrome extension source, less prone to error (credit to Shoginn for the url!)
+	- Updated quizzes to log open quiz offers, completed quiz offers, all points
+	- Modified error catching for alerts, combined with timeoutexception
+	- Misc fixes
 
 **2018.03**
+
 	- Fixed issue with daily poll IDs changing
 	- Added check for sign-in prompt after click on a quiz 
 	- Misc fixes
