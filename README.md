@@ -22,7 +22,7 @@ This program will automatically complete search requests and quizzes on Microsof
 <h2>REQUIREMENTS</h2>
 
 - Python 3.6
-- Requests 2.19.1
+- Requests 2.21.0
 - Selenium 3.14.0
 - Geckodriver for Selenium 
 
